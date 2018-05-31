@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './Shelf.css';
+
 const Shelf = (props) => {
     return (
         <div className="list-books">
