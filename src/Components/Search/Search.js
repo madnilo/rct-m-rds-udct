@@ -24,8 +24,14 @@ class Search extends React.Component{
       searchTerm: '',
     }
     
+    this.inputSearch = React.createRef();
+
     this.handleSearch = this.handleSearch.bind(this);
     this.fillResults = this.fillResults.bind(this);
+  }
+
+  componentDidMount(){
+    this.inputSearch.current.focus();
   }
 
   handleSearch(e){
@@ -44,6 +50,11 @@ class Search extends React.Component{
     .catch(err => console.log('error fetching results', err));
   }
 
+  changeShelf(book, e){
+    BooksAPI.update(book, e.target.value)
+    .then(res => console.log(res));
+  }
+
   render() {
     return (
       <div className="search-books">
@@ -52,7 +63,8 @@ class Search extends React.Component{
             Close
           </a>
           <div className="search-books-input-wrapper">
-            <input type="text" 
+            <input ref={this.inputSearch} 
+            type="text" 
             placeholder="Search by title or author"
             value={this.state.searchTerm} 
             onChange={this.handleSearch}/>
@@ -64,9 +76,9 @@ class Search extends React.Component{
               ?
               (<Spinner/>)
               : 
-              (this.state.results.map(bookData => (
-              <li key={bookData.id}>
-                <Book data={bookData}/>
+              (this.state.results.map(book => (
+              <li key={book.id}>
+                <Book data={book} changeShelf={this.changeShelf}/>
               </li>
             )))}
           </ol>
