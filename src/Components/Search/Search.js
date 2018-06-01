@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 import * as BooksAPI from '../../BooksAPI';
 import Spinner from '../Utils/Spinner';
 import Book from '../Book/Book';
@@ -83,9 +83,9 @@ class Search extends React.Component{
     return (
       <div className="search-books">
         <div className="search-books-bar">
-          <a className="close-search" onClick={this.props.showShelf}>
+          <Link className="close-search" to='/'>
             Close
-          </a>
+          </Link>
           <div className="search-books-input-wrapper">
             <input ref={this.inputSearch} 
             type="text" 
