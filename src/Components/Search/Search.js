@@ -15,7 +15,7 @@ class Search extends React.Component{
   'Larsson', 'Learn', 'Literary Fiction', 'Make', 'Manage', 'Marquez', 'Money', 'Mystery', 'Negotiate', 
   'Painting', 'Philosophy', 'Photography', 'Poetry', 'Production', 'Programming', 'React', 'Redux', 'River', 
   'Robotics', 'Rowling', 'Satire', 'Science Fiction', 'Shakespeare', 'Singh', 'Swimming', 'Tale', 'Thrun', 
-  'Time', 'Tolstoy', 'Travel', 'Ultimate', 'Virtual Reality', 'Web Development', 'iOS'];
+  'Time', 'Tolstoy', 'Travel', 'Ultimate', 'Virtual Reality', 'Web Development', 'iOS'].map(item => item.toLowerCase());
   
   constructor(props) {
     super(props);
@@ -47,7 +47,7 @@ class Search extends React.Component{
     e.preventDefault();
     let newTerm = e.target.value;
     this.setState({searchTerm: newTerm})
-    if(this.allowedTerms.includes(newTerm)){
+    if(this.allowedTerms.includes(newTerm.toLowerCase())){
       this.setState({invalidTerm: false});
       this.fillResults(newTerm);
     }
