@@ -2,7 +2,8 @@ import React from 'react';
 
 import * as BooksAPI from '../../BooksAPI';
 import BookShelf from '../BookShelf/BookShelf';
-import Spinner from '../Spinner/Spinner'
+import Spinner from '../Utils/Spinner'
+import './MyReadings.css'
   
 class MyReadings extends React.Component {
 
@@ -14,9 +15,21 @@ class MyReadings extends React.Component {
 			wantToRead: null,
 			read:null,
 		}
+
+		this.changeShelf = this.changeShelf.bind(this);
+		this.getCollection = this.getCollection.bind(this);
 	}
 
 	componentWillMount(){
+		this.getCollection();
+	}
+
+	changeShelf(book, e){
+    BooksAPI.update(book, e.target.value)
+		.then(res => this.getCollection());
+	}
+	
+	getCollection(){
 		BooksAPI.getAll()
 		.then(res => {
 			let currentlyReading = res.filter(book => book.shelf === 'currentlyReading');
@@ -26,11 +39,6 @@ class MyReadings extends React.Component {
 		});
 	}
 
-	changeShelf(book, e){
-    BooksAPI.update(book, e.target.value)
-    .then(res => console.log(res));
-  }
-
 	render(){
 		return (
 			<div className="list-books">
@@ -38,7 +46,6 @@ class MyReadings extends React.Component {
 					<h1>MyReads</h1>
 				</div>
 				<div className="list-books-content">
-					
 						{this.state.currentlyReading == null 
 							?	
 							(<Spinner/>)
@@ -49,8 +56,6 @@ class MyReadings extends React.Component {
 								<BookShelf changeShelf={this.changeShelf} title='Read' books={this.state.read}/>
 							</div>)
 						}
-						
-					
 				</div>
 				<div className="open-search">
 					<a onClick={this.props.showSearch}>Add a book</a>

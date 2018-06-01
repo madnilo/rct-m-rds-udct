@@ -1,8 +1,9 @@
 import React from 'react';
 
 import * as BooksAPI from '../../BooksAPI';
-import Spinner from '../Spinner/Spinner';
+import Spinner from '../Utils/Spinner';
 import Book from '../Book/Book';
+import NoResults from '../Utils/NoResults'
 import './Search.css';
 
 class Search extends React.Component{
@@ -21,13 +22,21 @@ class Search extends React.Component{
     
     this.state = {
       results: null,
+      myBooks: null,
       searchTerm: '',
+      invalidTerm: true,
     }
     
     this.inputSearch = React.createRef();
 
     this.handleSearch = this.handleSearch.bind(this);
     this.fillResults = this.fillResults.bind(this);
+    this.changeShelf = this.changeShelf.bind(this);
+  }
+
+  componentWillMount(){
+    BooksAPI.getAll()
+    .then(myBooks => this.setState({myBooks}));
   }
 
   componentDidMount(){
@@ -38,21 +47,36 @@ class Search extends React.Component{
     e.preventDefault();
     let newTerm = e.target.value;
     this.setState({searchTerm: newTerm})
-    if(this.allowedTerms.includes(newTerm))
+    if(this.allowedTerms.includes(newTerm)){
+      this.setState({invalidTerm: false});
       this.fillResults(newTerm);
+    }
     else
-      this.setState({results: null});
+      this.setState({results: null, invalidTerm: true});
   }
 
   fillResults(searchTerm){
+    let myBooks = this.state.myBooks;
     BooksAPI.search(searchTerm)
-    .then(data => this.setState({results: data}))
+    .then(data => {
+      data = data.map(book => {
+        let myBook = myBooks.filter(item => item.id === book.id);
+        return ({...book, shelf: myBook.length > 0 ? myBook[0].shelf : "none"});
+      });
+      this.setState({results: data});
+    })
     .catch(err => console.log('error fetching results', err));
   }
 
   changeShelf(book, e){
-    BooksAPI.update(book, e.target.value)
-    .then(res => console.log(res));
+    let newShelf = e.target.value;
+    BooksAPI.update(book, newShelf)
+    .then(res => {
+      let index = this.state.results.findIndex(item => item.id === book.id);
+      let results = this.state.results;
+      results[index].shelf = newShelf;
+      this.setState({results})
+    });
   }
 
   render() {
@@ -74,7 +98,7 @@ class Search extends React.Component{
           <ol className="books-grid">
             { this.state.results === null
               ?
-              (<Spinner/>)
+              (this.state.invalidTerm ? <NoResults/> : <Spinner/>)
               : 
               (this.state.results.map(book => (
               <li key={book.id}>
