@@ -2,7 +2,7 @@ import React from 'react'
 
 import './App.css'
 import Search from './Components/Search/Search'
-import Shelf from './Components/Shelf/Shelf'
+import MyReadings from './Components/Main/MyReadings'
 
 class BooksApp extends React.Component {
   constructor(props){
@@ -33,7 +33,7 @@ class BooksApp extends React.Component {
       <div className="app">
         { this.state.showSearchPage 
           ? <Search showShelf={this.showShelf} /> 
-          : <Shelf showSearch={this.showSearch} /> }
+          : <MyReadings showSearch={this.showSearch} /> }
       </div>
     )
   }
